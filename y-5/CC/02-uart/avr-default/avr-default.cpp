@@ -14,12 +14,12 @@ void uart_init(void) {
     UCSR0B = (1 << 3);
 
     // Asynchroner Modus, keine Parität, 1 Stopbit, 8 Datenbits
-    UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
+    //UCSR0C = (1 << 1) | (1 << 2); //not necessary - equals default setting
 }
 
 void uart_send_char(char c) {
     // Warten bis das Senderegister leer ist
-    while (!(UCSR0A & (1 << UDRE0)));
+    while (!(UCSR0A & (1 << 5)));
     // Zeichen senden
     UDR0 = c;
 }
@@ -27,10 +27,10 @@ void uart_send_char(char c) {
 int main(void) {
     uart_init();         // UART initialisieren
     
-
     while (1) {
         // Endlosschleife
-        uart_send_char('A'); // Zeichen senden
+        uart_send_char('S'); // Zeichen senden
+        uart_send_char('\n');
         _delay_ms(1000);
     }
 
