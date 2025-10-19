@@ -1,5 +1,4 @@
 # ATmega 2560 UART
-https://www.mikrocontroller.net/articles/AVR-GCC-Tutorial/Der_UART
 
 ## Der ATmega2560 verfügt über 4 UART-Schnittstellen:
 - USART0 → Register: UCSR0A, UCSR0B, UCSR0C, UDR0, UBRR0H, UBRR0L
@@ -20,7 +19,7 @@ UART0 ist dabei über einen UART <-> USB Converter mit dem Rechner verbunden und
 In diesen Registern müssen wir dem UART mitteilen, wie schnell wir gerne kommunizieren möchten. Der Wert, der in dieses Register geschrieben werden muss, errechnet sich nach folgender Formel:
 
 (Taktfrequenz in Hz / (Baudrate * 16)) - 1
-Die Taktfreuenz unserer ATmega 2560 Boards beträgt 16MHz. Wir können dafür folgende Konstante definieren:
+Die Taktfrequenz unserer ATmega 2560 Boards beträgt 16MHz. Wir können dafür folgende Konstante definieren:
 
 `#define CPU_FREQ 16000000UL //unsigned long = 4byte`
 
