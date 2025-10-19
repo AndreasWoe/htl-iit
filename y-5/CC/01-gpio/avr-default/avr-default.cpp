@@ -9,7 +9,7 @@ int main(void)
   PORTH |= (1<<5);      //set Bit 5 in PORTH Register -> internal pullup ACTIVE
  
   while (1) {
-    if(!(PINH & (1<<5))) {
+    if(!(PINH & (1<<5))) { //0 == FALSE all other values are TRUE
       PORTH |= (1<<4);  //Pin 4 Port H -> set HIGH
       _delay_ms(200);
       PORTH &= ~(1<<4); //Pin 4 Port H -> set LOW
