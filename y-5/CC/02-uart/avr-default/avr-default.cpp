@@ -10,8 +10,8 @@ void uart_init(void) {
     UBRR0H = (unsigned char)(UBRR_VALUE >> 8);
     UBRR0L = (unsigned char)UBRR_VALUE;
 
-    // Transmitter aktivieren (TXEN0)
-    UCSR0B = (1 << TXEN0);
+    // Transmitter aktivieren
+    UCSR0B = (1 << 3);
 
     // Asynchroner Modus, keine Parität, 1 Stopbit, 8 Datenbits
     UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
