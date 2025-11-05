@@ -45,7 +45,8 @@ Siehe Datenblatt - 22.10.2 UCSRnA – USART Control and Status Register A
 ### Ein Zeichen senden (UDR0)
 Siehe Datenblatt - 22.10.1 UDRn – USART I/O Data Register n
 
-
+## Hinweis - Codebeispiele im Datenblatt
+Beachte auch Datenblatt Kapitel 22.5 & 22.6 - hier findet sich Beispiel Code der zur Umsetzung dieser Aufgabe sehr hilfreich ist! 
 
 
 

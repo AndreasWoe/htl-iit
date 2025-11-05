@@ -86,6 +86,18 @@ MCP2515 Pin   | Arduino UNO Pin
 | SCK         | 13
 | INT         | 3
 
+## Using the MCP2515 with Arduino Mega 2560
+
+MCP2515 Pin   | Arduino UNO Pin 
+|-------------|----------------------------
+| VCC         | VCC 5V
+| GND         | Ground
+| CS          | Pin 10 (default in library, can be changed)
+| SO          | Pin 50 (SPI MISO)
+| SI          | Pin 51 (SPI MOSI)
+| SCK         | Pin 52 (SPI Clock)
+| INT         | Pin 2 (Interrupt, optional but recommended)
+
 ## Sample Program
 ```
 // Copyright (c) Sandeep Mistry. All rights reserved.
