@@ -99,6 +99,13 @@ MCP2515 Pin   | Arduino UNO Pin
 | INT         | Pin 2 (Interrupt, optional but recommended)
 
 ## Sample Program
+
+Sample Program uses the library:
+
+`https://github.com/sandeepmistry/arduino-CAN`
+
+In Arduino Studio / Libraries serach for: "CAN by Sandeep Mistry"
+
 ```
 // Copyright (c) Sandeep Mistry. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.

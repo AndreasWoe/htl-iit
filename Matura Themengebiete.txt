@@ -1,0 +1,20 @@
+(SYT) Themenbereiche Bisher:
+
+μController - Anzeige und Bedienung
+μController - steuern und regeln
+μController - kommunizieren und speichern
+
+(SYT) Themenbereiche Neu: (2025)
+
+(Arduino)
+- Grundegender Aufbau und Funktionsweise von Mikrocontroller Systemen
+(Raspberry)
+- Einsatz von Mikrocontroller- und netzwerkfähigen Systemen zur Prozessdatenerfassung und Verarbeitung
+
+IIT (Cloud Computing ab 2025)
+
+Themenbereiche:
+
+Embedded Systems - Grundlagen und Prozessdatenerfassung im industriellen Umfeld
+Embedded Systems - Industrielle Programmierung und Feldbusse
+
