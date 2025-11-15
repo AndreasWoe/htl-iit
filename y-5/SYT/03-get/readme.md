@@ -19,4 +19,4 @@ sudo apt install libcurl4-openssl-dev
 
 Dokumentation der curl Bibliothek: https://curl.se/libcurl/c/allfuncs.html
 
-GitHub Classroom Link: https://classroom.github.com/a/KrQekQ3_
+GitHub Classroom Link: 
