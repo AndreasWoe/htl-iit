@@ -74,6 +74,84 @@ print("Received message: ", message)
 #### Run
 `python3 script.py`
 
+#### Example C Program
+
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <linux/can.h>
+#include <linux/can/raw.h>
+
+int main() {
+    int s;
+_can addr;
+    struct ifreq ifr;
+    struct can_frame frame;
+
+    // Create socket
+    s = socket(PF_CAN, SOCK_RAW, CAN_RAW);
+    if (s < 0) {
+        perror("Socket");
+        return 1;
+    }
+
+    // Specify CAN interface
+    strcpy(ifr.ifr_name, "can0");
+    ioctl(s, SIOCGIFINDEX, &ifr);
+
+    addr.can_family = AF_CAN;
+    addr.can_ifindex = ifr.ifr_ifindex;
+
+    // Bind socket
+    if (bind(s, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+        perror("Bind");
+        return 1;
+    }
+
+    // Prepare CAN frame
+    frame.can_id = 0x123;
+    frame.can_dlc = 2;
+    frame.data[0] = 0xAB;
+    frame.data[1] = 0xCD;
+
+    // Send frame
+    if (write(s, &frame, sizeof(struct can_frame)) != sizeof(struct can_frame)) {
+        perror("Write");
+        return 1;
+    }
+
+    printf("Sent CAN frame\n");
+
+    // Receive frame
+    if (read(s, &frame, sizeof(struct can_frame)) < 0) {
+        perror("Read");
+        return 1;
+    }
+
+    printf("Received CAN frame: ID=0x%X DLC=%d Data=", frame.can_id, frame.can_dlc);
+    for (int i = 0; i < frame.can_dlc; i++) {
+        printf("%02X ", frame.data[i]);
+    }
+    printf("\n");
+
+    close(s);
+    return 0;
+}
+```
+
+#### Compile and Run
+
+```
+gcc can_test.c -o can_test
+sudo ./can_tes
+
+```
+
 ## Using the MCP2515 with Arduino UNO
 
 MCP2515 Pin   | Arduino UNO Pin 
