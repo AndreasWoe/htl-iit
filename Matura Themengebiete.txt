@@ -7,7 +7,7 @@
 (SYT) Themenbereiche Neu: (2025)
 
 (Arduino)
-- Grundegender Aufbau und Funktionsweise von Mikrocontroller Systemen
+- Grundlegender Aufbau und Funktionsweise von Mikrocontroller Systemen
 (Raspberry)
 - Einsatz von Mikrocontroller- und netzwerkfähigen Systemen zur Prozessdatenerfassung und Verarbeitung
 
