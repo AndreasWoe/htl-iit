@@ -47,7 +47,7 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
     // Stops scanning after 10 seconds.
     private val SCAN_PERIOD: Long = 10000
 
-    init {
+    fun initBLE() {
         // Safely get the BluetoothManager from the application context
         bluetoothManager = application.getSystemService(BluetoothManager::class.java)
         bluetoothAdapter = bluetoothManager?.adapter
@@ -92,17 +92,11 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun scanLeDevice(activity : Activity) {
-        if (ContextCompat.checkSelfPermission(
-                application.applicationContext,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        )
-            ActivityCompat.requestPermissions(
-                activity,
-                arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
-                2
-            )
+    fun scanLeDevice() {
+        if (ContextCompat.checkSelfPermission(application.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            //we have no permission!
+        }
         else {
             if (!scanning) { // Stops scanning after a pre-defined scan period.
                 handler.postDelayed({
