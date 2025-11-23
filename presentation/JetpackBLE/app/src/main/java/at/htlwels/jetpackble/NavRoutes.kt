@@ -1,6 +1,21 @@
 package at.htlwels.jetpackble
 
-sealed class NavRoutes(val route: String) {
-    object Home : NavRoutes("home")
-    object Parking_0 : NavRoutes("parking_0")
-}
+import kotlinx.serialization.Serializable
+
+@Serializable
+object Screen_Home
+
+@Serializable
+object Screen_P0
+
+@Serializable
+object Screen_P1
+
+@Serializable
+object Screen_P2
+
+@Serializable
+object Screen_P3
+
+@Serializable
+object Screen_P4

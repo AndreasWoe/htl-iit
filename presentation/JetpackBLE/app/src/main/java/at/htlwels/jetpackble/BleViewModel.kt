@@ -218,15 +218,15 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
                 if(receivedData.contains("0"))
                     _nav.tryEmit("home")
                 else if(receivedData.contains("1"))
-                    _nav.tryEmit("parking_0")
+                    _nav.tryEmit("p_0")
                 else if(receivedData.contains("2"))
-                    _nav.tryEmit("parking_1")
+                    _nav.tryEmit("p_1")
                 else if(receivedData.contains("3"))
-                    _nav.tryEmit("parking_2")
+                    _nav.tryEmit("p_2")
                 else if(receivedData.contains("4"))
-                    _nav.tryEmit("parking_3")
+                    _nav.tryEmit("p_3")
                 else if(receivedData.contains("5"))
-                    _nav.tryEmit("parking_4")
+                    _nav.tryEmit("p_4")
             }
         }
     }

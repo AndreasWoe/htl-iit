@@ -3,6 +3,7 @@ package at.htlwels.jetpackble
 import android.app.Application
 import android.bluetooth.BluetoothDevice
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -48,6 +49,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
 
@@ -55,9 +57,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         viewModel.initBLE()
-
         setContent {
             MainScreen(viewModel)
         }
@@ -69,24 +69,24 @@ fun MainScreen(viewModel: BleViewModel) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = "home",
+        startDestination = Screen_Home,
     ) {
-        composable("home") {
+        composable<Screen_Home> {
             HomeScreen(viewModel, navController)
         }
-        composable("parking_0") {
+        composable<Screen_P0> {
             Parking(viewModel, navController, R.drawable.pcm_0)
         }
-        composable("parking_1") {
+        composable<Screen_P1> {
             Parking(viewModel, navController, R.drawable.pcm_1)
         }
-        composable("parking_2") {
+        composable<Screen_P2> {
             Parking(viewModel, navController, R.drawable.pcm_2)
         }
-        composable("parking_3") {
+        composable<Screen_P3> {
             Parking(viewModel, navController, R.drawable.pcm_3)
         }
-        composable("parking_4") {
+        composable<Screen_P4> {
             Parking(viewModel, navController, R.drawable.pcm_4)
         }
     }
@@ -95,9 +95,7 @@ fun MainScreen(viewModel: BleViewModel) {
 @Composable
 fun Parking(viewModel: BleViewModel = viewModel(), navController: NavHostController, res: Int) {
     LaunchedEffect(Unit) {
-        viewModel.nav.collect { event ->
-            navController.navigate(event)
-        }
+        viewModel.nav.collect { event -> navigateTo(navController, event) }
     }
 
     Box(modifier = Modifier.fillMaxSize().background(Color.DarkGray)) {
@@ -117,19 +115,30 @@ fun Parking(viewModel: BleViewModel = viewModel(), navController: NavHostControl
     heightDp = 800   // height in dp
 )
 @Composable
-fun HomeScreenPreview() {
-    val viewModel = BleViewModel(Application())
+fun HomeScreenPreview(viewModel: BleViewModel = BleViewModel(Application())) {
     val navController = rememberNavController()
     HomeScreen(viewModel, navController)
 }
 
+private fun navigateTo(navController: NavHostController, destination: String) {
+    if(destination.equals("home"))
+        navController.navigate(Screen_Home)
+    else if(destination.equals("p_0"))
+        navController.navigate(Screen_P0)
+    else if(destination.equals("p_1"))
+        navController.navigate(Screen_P1)
+    else if(destination.equals("p_2"))
+        navController.navigate(Screen_P2)
+    else if(destination.equals("p_3"))
+        navController.navigate(Screen_P3)
+    else if(destination.equals("p_4"))
+        navController.navigate(Screen_P4)
+}
+
 @Composable
 fun HomeScreen(viewModel: BleViewModel = viewModel(), navController: NavHostController) {
-
     LaunchedEffect(Unit) {
-        viewModel.nav.collect { event ->
-            navController.navigate(event)
-        }
+        viewModel.nav.collect { event -> navigateTo(navController, event) }
     }
 
     var mode_wet by remember { mutableStateOf(false) }
