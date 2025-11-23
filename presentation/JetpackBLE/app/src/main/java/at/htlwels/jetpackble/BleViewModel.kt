@@ -1,7 +1,6 @@
 package at.htlwels.jetpackble
 
 import android.Manifest
-import android.app.Activity
 import android.app.Application
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -20,10 +19,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.util.Locale
 import java.util.UUID
 
@@ -33,6 +36,14 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
     val devices = mutableStateListOf<BluetoothDevice>()
     var data: String by mutableStateOf("")
         private set
+
+    //using StateFlow to hold UI state
+    private val _flowData = MutableStateFlow("")
+    val flowData: StateFlow<String> = _flowData.asStateFlow()
+
+    //testing navigation
+    private val _nav = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val nav = _nav.asSharedFlow()
 
     private var bluetoothManager: BluetoothManager? = null
     private var bluetoothAdapter: BluetoothAdapter? = null
@@ -201,6 +212,21 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
                 val d = characteristic.getValue()
                 val receivedData = String(d)
                 data += receivedData
+                _flowData.value += data
+
+                //navigation test
+                if(receivedData.contains("0"))
+                    _nav.tryEmit("home")
+                else if(receivedData.contains("1"))
+                    _nav.tryEmit("parking_0")
+                else if(receivedData.contains("2"))
+                    _nav.tryEmit("parking_1")
+                else if(receivedData.contains("3"))
+                    _nav.tryEmit("parking_2")
+                else if(receivedData.contains("4"))
+                    _nav.tryEmit("parking_3")
+                else if(receivedData.contains("5"))
+                    _nav.tryEmit("parking_4")
             }
         }
     }

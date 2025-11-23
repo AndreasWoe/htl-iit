@@ -27,6 +27,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +43,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
 
@@ -52,67 +59,78 @@ class MainActivity : ComponentActivity() {
         viewModel.initBLE()
 
         setContent {
-            Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
-                MainScreen(viewModel)
-            }
+            MainScreen(viewModel)
         }
-    }
-}
-
-@Preview(
-name = "Landscape Preview",
-showBackground = true,
-widthDp = 1280,  // width in dp
-heightDp = 800   // height in dp
-)
-@Composable
-fun MainScreenPreview() {
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
-        val viewModel: BleViewModel = BleViewModel(Application())
-        MainScreen(viewModel)
-    }
-}
-
-@Composable
-fun PCMButton(text: String, enabled: Boolean = false, onClick: () -> Unit = {}) {
-    var c: Color
-    var lc: Color = Color.Transparent
-
-    if(enabled) {
-        c = Color(0xFF989A9B)
-        lc = Color.Red
-    } else {
-        c = Color(0xFF313234)
-        lc = c
-    }
-
-    Column(Modifier.padding(0.dp),
-        verticalArrangement = Arrangement.spacedBy(0.dp)) {
-        Button(
-            onClick = { onClick() },
-            modifier = Modifier.fillMaxWidth(1.0f).defaultMinSize(minHeight = 50.dp),
-            shape = RectangleShape, // makes it rectangular
-            colors = ButtonDefaults.buttonColors(containerColor = c)
-        )
-        {
-            Text(modifier = Modifier,
-                text = text,
-                color = Color.White,
-                //fontSize = 28.sp,
-                fontFamily = FontFamily.SansSerif // closest to Arial by default
-            )
-        }
-        Box(
-            modifier = Modifier
-                .height(4.dp)
-                .fillMaxWidth()
-                .background(lc)
-        )
     }
 }
 
 @Composable
 fun MainScreen(viewModel: BleViewModel) {
+    val navController = rememberNavController()
+    NavHost(
+        navController = navController,
+        startDestination = "home",
+    ) {
+        composable("home") {
+            HomeScreen(viewModel, navController)
+        }
+        composable("parking_0") {
+            Parking(viewModel, navController, R.drawable.pcm_0)
+        }
+        composable("parking_1") {
+            Parking(viewModel, navController, R.drawable.pcm_1)
+        }
+        composable("parking_2") {
+            Parking(viewModel, navController, R.drawable.pcm_2)
+        }
+        composable("parking_3") {
+            Parking(viewModel, navController, R.drawable.pcm_3)
+        }
+        composable("parking_4") {
+            Parking(viewModel, navController, R.drawable.pcm_4)
+        }
+    }
+}
+
+@Composable
+fun Parking(viewModel: BleViewModel = viewModel(), navController: NavHostController, res: Int) {
+    LaunchedEffect(Unit) {
+        viewModel.nav.collect { event ->
+            navController.navigate(event)
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize().background(Color.DarkGray)) {
+        Image(
+            modifier = Modifier.fillMaxSize(),
+            painter = painterResource(id = res),
+            contentDescription = null,
+            contentScale = ContentScale.Fit // Adjusts how the image fits
+        )
+    }
+}
+
+@Preview(
+    name = "Landscape Preview",
+    showBackground = true,
+    widthDp = 1280,  // width in dp
+    heightDp = 800   // height in dp
+)
+@Composable
+fun HomeScreenPreview() {
+    val viewModel = BleViewModel(Application())
+    val navController = rememberNavController()
+    HomeScreen(viewModel, navController)
+}
+
+@Composable
+fun HomeScreen(viewModel: BleViewModel = viewModel(), navController: NavHostController) {
+
+    LaunchedEffect(Unit) {
+        viewModel.nav.collect { event ->
+            navController.navigate(event)
+        }
+    }
 
     var mode_wet by remember { mutableStateOf(false) }
     var mode_normal by remember { mutableStateOf(true) }
@@ -120,68 +138,90 @@ fun MainScreen(viewModel: BleViewModel) {
     var mode_sport_plus by remember { mutableStateOf(false) }
 
     val suspension = remember { mutableStateListOf(true, false) }
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+        Image(
+            modifier = Modifier.fillMaxSize(),
+            painter = painterResource(id = R.drawable.pcm_main_0),
+            contentDescription = null,
+            contentScale = ContentScale.Fit // Adjusts how the image fits
+        )
+        Column() {
+            Row(Modifier.weight(0.05f, fill = true)) {}
+            Row(Modifier.weight(weight = 0.75f, fill = true)) {
+                Column(Modifier.weight(weight = 0.2f, fill = true).padding(5.0.dp))
+                {
+                    val on_mode_wet = {
+                        mode_wet = true; mode_normal = false; mode_sport = false; mode_sport_plus =
+                        false
+                    }
+                    val on_mode_normal = {
+                        mode_normal = true; mode_wet = false; mode_sport = false; mode_sport_plus =
+                        false
+                    }
+                    val on_mode_sport = {
+                        mode_sport = true; mode_wet = false; mode_normal = false; mode_sport_plus =
+                        false
+                    }
+                    val on_mode_sport_plus = {
+                        mode_sport_plus = true; mode_wet = false; mode_normal = false; mode_sport =
+                        false
+                    }
 
-    Image(
-        modifier = Modifier.fillMaxSize(),
-        painter = painterResource(id = R.drawable.pcm_main_0),
-        contentDescription = null,
-        contentScale = ContentScale.Fit // Adjusts how the image fits
-    )
-Column() {
-    Row(Modifier.weight(0.05f, fill=true)) {}
-    Row(Modifier.weight(weight = 0.75f, fill = true)) {
-        Column(Modifier.weight(weight = 0.2f, fill = true).padding(5.0.dp))
-        {
-            val on_mode_wet = {mode_wet=true; mode_normal=false; mode_sport=false; mode_sport_plus=false}
-            val on_mode_normal = {mode_normal=true; mode_wet=false; mode_sport=false; mode_sport_plus=false}
-            val on_mode_sport = {mode_sport=true; mode_wet=false; mode_normal=false; mode_sport_plus=false}
-            val on_mode_sport_plus = {mode_sport_plus=true; mode_wet=false; mode_normal=false; mode_sport=false}
+                    Text(
+                        text = "Modus",
+                        color = Color.White,
+                        fontSize = 25.sp,
+                        fontFamily = FontFamily.SansSerif // closest to Arial by default
+                    )
+                    PCMButton("WET", enabled = mode_wet, onClick = on_mode_wet)
+                    PCMButton("NORMAL", enabled = mode_normal, onClick = on_mode_normal)
+                    PCMButton("SPORT", enabled = mode_sport, onClick = on_mode_sport)
+                    PCMButton("SPORT PLUS", enabled = mode_sport_plus, onClick = on_mode_sport_plus)
+                }
+                Column(Modifier.weight(weight = 0.6f, fill = true)) { }
+                Column(Modifier.weight(weight = 0.2f, fill = true).padding(5.0.dp)) {
+                    Text(
+                        text = "Fahrwerk",
+                        color = Color.White,
+                        fontSize = 25.sp,
+                        fontFamily = FontFamily.SansSerif // closest to Arial by default
+                    )
 
-            Text(
-                text = "Modus",
-                color = Color.White,
-                fontSize = 25.sp,
-                fontFamily = FontFamily.SansSerif // closest to Arial by default
-            )
-            PCMButton("WET", enabled = mode_wet, onClick = on_mode_wet)
-            PCMButton("NORMAL", enabled = mode_normal, onClick = on_mode_normal)
-            PCMButton("SPORT", enabled = mode_sport, onClick = on_mode_sport)
-            PCMButton("SPORT PLUS", enabled = mode_sport_plus, onClick = on_mode_sport_plus)
-        }
-        Column(Modifier.weight(weight = 0.6f, fill = true)) { }
-        Column(Modifier.weight(weight = 0.2f, fill = true).padding(5.0.dp)) {
-            Text(
-                text = "Fahrwerk",
-                color = Color.White,
-                fontSize = 25.sp,
-                fontFamily = FontFamily.SansSerif // closest to Arial by default
-            )
+                    val on_suspension_normal = { suspension[0] = true; suspension[1] = false }
+                    val on_suspension_sport = { suspension[0] = false; suspension[1] = true }
 
-            val on_suspension_normal = {suspension[0]=true; suspension[1]=false}
-            val on_suspension_sport = {suspension[0]=false; suspension[1]=true}
+                    PCMButton("NORMAL", enabled = suspension[0], onClick = on_suspension_normal)
+                    PCMButton("SPORT", enabled = suspension[1], onClick = on_suspension_sport)
+                    Spacer(Modifier.height(25.dp))
+                    Text(
+                        text = "System",
+                        color = Color.White,
+                        fontSize = 25.sp,
+                        fontFamily = FontFamily.SansSerif // closest to Arial by default
+                    )
 
-            PCMButton("NORMAL", enabled = suspension[0], onClick = on_suspension_normal)
-            PCMButton("SPORT", enabled = suspension[1], onClick = on_suspension_sport)
-            Spacer(Modifier.height(25.dp))
-            Text(
-                text = "System",
-                color = Color.White,
-                fontSize = 25.sp,
-                fontFamily = FontFamily.SansSerif // closest to Arial by default
-            )
+                    PCMButton(
+                        text = "Scan",
+                        enabled = false,
+                        onClick = { viewModel.scanLeDevice() })
+                }
+            }
+            Row(Modifier.weight(weight = 0.2f, fill = true)) {
+                val scrollState = rememberScrollState()
 
-            PCMButton(text="Scan", enabled = false, onClick = { viewModel.scanLeDevice() })
+                Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }
+                Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }
+                Column(
+                    Modifier.weight(0.25f, fill = true).fillMaxHeight()
+                ) { EntryList(viewModel.devices, viewModel = viewModel) }
+                Column(
+                    Modifier.weight(0.25f, fill = true).fillMaxHeight().verticalScroll(scrollState)
+                ) {
+                    Text(text = viewModel.flowData.collectAsState().value, color = Color.White)
+                }
+            }
         }
     }
-    Row(Modifier.weight(weight = 0.2f, fill = true)) {
-        val scrollState = rememberScrollState()
-
-        Column(Modifier.weight(0.25f, fill=true).fillMaxHeight()) { }
-        Column(Modifier.weight(0.25f, fill=true).fillMaxHeight()) { }
-        Column(Modifier.weight(0.25f, fill=true).fillMaxHeight()) {EntryList(viewModel.devices, viewModel = viewModel) }
-        Column(Modifier.weight(0.25f, fill=true).fillMaxHeight().verticalScroll(scrollState)) {Text(text = viewModel.data, color = Color.White) }
-    }
-}
 }
 
 @Composable
