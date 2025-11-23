@@ -3,19 +3,27 @@ package at.htlwels.jetpackble
 import kotlinx.serialization.Serializable
 
 @Serializable
-object Screen_Home
+object ScreenHome
 
 @Serializable
-object Screen_P0
+object ScreenP0
 
 @Serializable
-object Screen_P1
+object ScreenP1
 
 @Serializable
-object Screen_P2
+object ScreenP2
 
 @Serializable
-object Screen_P3
+object ScreenP3
 
 @Serializable
-object Screen_P4
+object ScreenP4
+
+//in Project Structure - add dependency
+//org.jetbrains.kotlinx:kotlinx-serialization-json
+
+//libs.versions.toml - add [plugins]
+//kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+//build.gradle.kts - add alias
+//(libs.plugins.kotlin.serialization)

@@ -3,18 +3,15 @@ package at.htlwels.jetpackble
 import android.app.Application
 import android.bluetooth.BluetoothDevice
 import android.os.Bundle
-import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,7 +22,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -49,7 +44,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
 
@@ -69,24 +63,24 @@ fun MainScreen(viewModel: BleViewModel) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = Screen_Home,
+        startDestination = ScreenHome,
     ) {
-        composable<Screen_Home> {
+        composable<ScreenHome> {
             HomeScreen(viewModel, navController)
         }
-        composable<Screen_P0> {
+        composable<ScreenP0> {
             Parking(viewModel, navController, R.drawable.pcm_0)
         }
-        composable<Screen_P1> {
+        composable<ScreenP1> {
             Parking(viewModel, navController, R.drawable.pcm_1)
         }
-        composable<Screen_P2> {
+        composable<ScreenP2> {
             Parking(viewModel, navController, R.drawable.pcm_2)
         }
-        composable<Screen_P3> {
+        composable<ScreenP3> {
             Parking(viewModel, navController, R.drawable.pcm_3)
         }
-        composable<Screen_P4> {
+        composable<ScreenP4> {
             Parking(viewModel, navController, R.drawable.pcm_4)
         }
     }
@@ -121,18 +115,14 @@ fun HomeScreenPreview(viewModel: BleViewModel = BleViewModel(Application())) {
 }
 
 private fun navigateTo(navController: NavHostController, destination: String) {
-    if(destination.equals("home"))
-        navController.navigate(Screen_Home)
-    else if(destination.equals("p_0"))
-        navController.navigate(Screen_P0)
-    else if(destination.equals("p_1"))
-        navController.navigate(Screen_P1)
-    else if(destination.equals("p_2"))
-        navController.navigate(Screen_P2)
-    else if(destination.equals("p_3"))
-        navController.navigate(Screen_P3)
-    else if(destination.equals("p_4"))
-        navController.navigate(Screen_P4)
+    when (destination) {
+        "home" -> navController.navigate(ScreenHome)
+        "p_0" -> navController.navigate(ScreenP0)
+        "p_1" -> navController.navigate(ScreenP1)
+        "p_2" -> navController.navigate(ScreenP2)
+        "p_3" -> navController.navigate(ScreenP3)
+        "p_4" -> navController.navigate(ScreenP4)
+    }
 }
 
 @Composable
