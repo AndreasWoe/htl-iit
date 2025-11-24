@@ -94,6 +94,9 @@ fun MainScreen(viewModel: BleViewModel) {
         composable<ScreenP4> {
             Parking(viewModel, navController, R.drawable.pcm_4)
         }
+        composable<ScreenScan> {
+            ScreenScan(viewModel, navController)
+        }
     }
 }
 
@@ -213,44 +216,15 @@ fun HomeScreen(viewModel: BleViewModel = viewModel(), navController: NavHostCont
                     PCMButton(
                         text = "Scan",
                         enabled = false,
-                        onClick = { viewModel.scanLeDevice() })
+                        onClick = { navController.navigate(ScreenScan) })
                 }
             }
             Row(Modifier.weight(weight = 0.2f, fill = true)) {
-                val scrollState = rememberScrollState()
-
                 Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }
                 Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }
-                Column(
-                    Modifier.weight(0.25f, fill = true).fillMaxHeight()
-                ) { EntryList(viewModel.devices, viewModel = viewModel) }
-                Column(
-                    Modifier.weight(0.25f, fill = true).fillMaxHeight().verticalScroll(scrollState)
-                ) {
-                    Text(text = viewModel.flowData.collectAsState().value, color = Color.White)
-                }
+                Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }
+                Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }
             }
-        }
-    }
-}
-
-@Composable
-fun EntryList(data: List<BluetoothDevice>, modifier : Modifier = Modifier, viewModel: BleViewModel) {
-    LazyColumn (modifier = modifier) {
-        items(data) { e ->
-            EntryItem(e, viewModel)
-            }
-    }
-}
-
-@Composable
-fun EntryItem(bd: BluetoothDevice, viewModel: BleViewModel) {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(8.dp)) {
-        Text(text = bd.name ?: "Unknown Device")
-        Button(onClick = { viewModel.connect(bd) }) {
-            Text("Connect")
         }
     }
 }

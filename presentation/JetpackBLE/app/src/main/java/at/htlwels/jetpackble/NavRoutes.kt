@@ -6,6 +6,9 @@ import kotlinx.serialization.Serializable
 object ScreenHome
 
 @Serializable
+object ScreenScan
+
+@Serializable
 object ScreenP0
 
 @Serializable
