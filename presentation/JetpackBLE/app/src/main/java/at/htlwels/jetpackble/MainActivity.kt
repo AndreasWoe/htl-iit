@@ -106,7 +106,9 @@ fun Parking(viewModel: BleViewModel = viewModel(), navController: NavHostControl
         viewModel.nav.collect { event -> navigateTo(navController, event) }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.DarkGray)) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.DarkGray)) {
         Image(
             modifier = Modifier.fillMaxSize(),
             painter = painterResource(id = res),
@@ -145,13 +147,11 @@ fun HomeScreen(viewModel: BleViewModel = viewModel(), navController: NavHostCont
         viewModel.nav.collect { event -> navigateTo(navController, event) }
     }
 
-    var mode_wet by remember { mutableStateOf(false) }
-    var mode_normal by remember { mutableStateOf(true) }
-    var mode_sport by remember { mutableStateOf(false) }
-    var mode_sport_plus by remember { mutableStateOf(false) }
-
     val suspension = remember { mutableStateListOf(true, false) }
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.Black)) {
         Image(
             modifier = Modifier.fillMaxSize(),
             painter = painterResource(id = R.drawable.pcm_main_0),
@@ -161,38 +161,25 @@ fun HomeScreen(viewModel: BleViewModel = viewModel(), navController: NavHostCont
         Column() {
             Row(Modifier.weight(0.05f, fill = true)) {}
             Row(Modifier.weight(weight = 0.75f, fill = true)) {
-                Column(Modifier.weight(weight = 0.2f, fill = true).padding(5.0.dp))
+                Column(Modifier
+                    .weight(weight = 0.2f, fill = true)
+                    .padding(5.0.dp))
                 {
-                    val on_mode_wet = {
-                        mode_wet = true; mode_normal = false; mode_sport = false; mode_sport_plus =
-                        false
-                    }
-                    val on_mode_normal = {
-                        mode_normal = true; mode_wet = false; mode_sport = false; mode_sport_plus =
-                        false
-                    }
-                    val on_mode_sport = {
-                        mode_sport = true; mode_wet = false; mode_normal = false; mode_sport_plus =
-                        false
-                    }
-                    val on_mode_sport_plus = {
-                        mode_sport_plus = true; mode_wet = false; mode_normal = false; mode_sport =
-                        false
-                    }
-
                     Text(
                         text = "Modus",
                         color = Color.White,
                         fontSize = 25.sp,
                         fontFamily = FontFamily.SansSerif // closest to Arial by default
                     )
-                    PCMButton("WET", enabled = mode_wet, onClick = on_mode_wet)
-                    PCMButton("NORMAL", enabled = mode_normal, onClick = on_mode_normal)
-                    PCMButton("SPORT", enabled = mode_sport, onClick = on_mode_sport)
-                    PCMButton("SPORT PLUS", enabled = mode_sport_plus, onClick = on_mode_sport_plus)
+                    PCMButton("WET", enabled = viewModel.mode_wet, onClick = {viewModel.changeModeTo(0)})
+                    PCMButton("NORMAL", enabled = viewModel.mode_normal, onClick = {viewModel.changeModeTo(1)})
+                    PCMButton("SPORT", enabled = viewModel.mode_sport, onClick = {viewModel.changeModeTo(2)})
+                    PCMButton("SPORT PLUS", enabled = viewModel.mode_sport_plus, onClick = {viewModel.changeModeTo(3)})
                 }
                 Column(Modifier.weight(weight = 0.6f, fill = true)) { }
-                Column(Modifier.weight(weight = 0.2f, fill = true).padding(5.0.dp)) {
+                Column(Modifier
+                    .weight(weight = 0.2f, fill = true)
+                    .padding(5.0.dp)) {
                     Text(
                         text = "Fahrwerk",
                         color = Color.White,
@@ -200,30 +187,63 @@ fun HomeScreen(viewModel: BleViewModel = viewModel(), navController: NavHostCont
                         fontFamily = FontFamily.SansSerif // closest to Arial by default
                     )
 
-                    val on_suspension_normal = { suspension[0] = true; suspension[1] = false }
-                    val on_suspension_sport = { suspension[0] = false; suspension[1] = true }
-
-                    PCMButton("NORMAL", enabled = suspension[0], onClick = on_suspension_normal)
-                    PCMButton("SPORT", enabled = suspension[1], onClick = on_suspension_sport)
+                    PCMButton("NORMAL", enabled = viewModel.suspension_normal, onClick = {viewModel.changeSuspension(0)})
+                    PCMButton("SPORT", enabled = viewModel.suspension_sport, onClick = {viewModel.changeSuspension(1)})
                     Spacer(Modifier.height(25.dp))
+                    var hideSystem = true;
+                    if(!hideSystem) {
+                        Text(
+                            text = "System",
+                            color = Color.White,
+                            fontSize = 25.sp,
+                            fontFamily = FontFamily.SansSerif // closest to Arial by default
+                        )
+                        PCMButton(
+                            text = "Scan",
+                            enabled = false,
+                            onClick = { navController.navigate(ScreenScan) })
+                    }
+                }
+            }
+            Row(Modifier.weight(weight = 0.2f, fill = true)) {
+                Column(Modifier
+                    .weight(0.25f, fill = true)
+                    .fillMaxHeight()) { }
+                Column(Modifier
+                    .weight(0.25f, fill = true)
+                    .fillMaxHeight()) { }
+                Column(Modifier
+                    .weight(0.25f, fill = true)
+                    .fillMaxHeight()) {
                     Text(
-                        text = "System",
+                        text = "Modus",
                         color = Color.White,
                         fontSize = 25.sp,
                         fontFamily = FontFamily.SansSerif // closest to Arial by default
                     )
-
-                    PCMButton(
-                        text = "Scan",
-                        enabled = false,
-                        onClick = { navController.navigate(ScreenScan) })
+                    Text(
+                        text = viewModel.mode.toString(),
+                        color = Color.Red,
+                        fontSize = 25.sp,
+                        fontFamily = FontFamily.SansSerif // closest to Arial by default
+                    )
                 }
-            }
-            Row(Modifier.weight(weight = 0.2f, fill = true)) {
-                Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }
-                Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }
-                Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }
-                Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }
+                Column(Modifier
+                    .weight(0.25f, fill = true)
+                    .fillMaxHeight()) {
+                    Text(
+                        text = "Fahrwerk",
+                        color = Color.White,
+                        fontSize = 25.sp,
+                        fontFamily = FontFamily.SansSerif // closest to Arial by default
+                    )
+                    Text(
+                        text = viewModel.suspension.toString(),
+                        color = Color.Red,
+                        fontSize = 25.sp,
+                        fontFamily = FontFamily.SansSerif // closest to Arial by default
+                    )
+                }
             }
         }
     }

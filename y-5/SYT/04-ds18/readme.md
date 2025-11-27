@@ -1,49 +1,25 @@
 # DS18 Temperatursensor
 
+## Aufgabe 1 - Testen der Sensoren in der Konsole
+
+### Ausführen:
 ```
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
-//Sensor-ID anpassen!
-#define SENSOR_PATH "/sys/bus/w1/devices/28-xxxxxxxxxxxx/w1_slave"
-
-double read_temperature() {
-    FILE *fp = fopen(SENSOR_PATH, "r");
-    if (fp == NULL) {
-        perror("Fehler beim Öffnen der Datei");
-        return -999.0;
-    }
-
-    char buffer[256];
-    double tempC = -999.0;
-
-    while (fgets(buffer, sizeof(buffer), fp)) {
-        char *t_ptr = strstr(buffer, "t=");
-        if (t_ptr) {
-            tempC = atof(t_ptr + 2) / 1000.0; // Umrechnung in °C
-            break;
-        }
-    }
-
-    fclose(fp);
-    return tempC;
-}
-
-int main() {
-    while (1) {
-        double temp = read_temperature();
-        if (temp != -999.0) {
-            printf("Temperatur: %.3f °C\n", temp);
-        } else {
-            printf("Fehler beim Lesen der Temperatur!\n");
-        }
-        sleep(1); // 1 Sekunde warten
-    }
-    return 0;
-}
+sudo modprobe w1_gpio
+sudo modprobe w1_therm
 ```
-## Kompilieren:
 
-`gcc main.c -o main`
+### Prüfen & ID des Sensors auslesen:
+`ls /sys/bus/w1/devices/`
+
+Antwort z.B.: `28-01144fdd30aa  w1_bus_master1`
+
+### Temperatur auslesen:
+`cat /sys/bus/w1/devices/28-xxxxxxxxx/w1_slave`
+
+Replace 28-xxxxxxxxx with the actual serial number of your sensor. The output will contain a line with "YES" for CRC check, and the temperature will be shown on the second line (e.g., t=25000 which is 25.0 C)
+
+### Information zum Sensor:
+https://www.elektronik-kompendium.de/sites/praxis/bauteil_ds18b20.htm
+
+## Aufgabe 2 - Implementierung in C
+Die Daten sollen nun im C Programm erfasst und an den Webserver übertragen werden. Ein Beispielprogramm zum Auslesen der Daten findest du im Anhang.

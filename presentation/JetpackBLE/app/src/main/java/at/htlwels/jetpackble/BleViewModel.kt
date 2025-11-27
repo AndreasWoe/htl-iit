@@ -18,6 +18,7 @@ import android.os.Looper
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
@@ -36,6 +37,17 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
     val devices = mutableStateListOf<BluetoothDevice>()
     var data: String by mutableStateOf("")
         private set
+
+    var mode_wet by mutableStateOf(false)
+    var mode_normal by mutableStateOf(true)
+    var mode_sport by mutableStateOf(false)
+    var mode_sport_plus by mutableStateOf(false)
+
+    var suspension_normal by mutableStateOf(true)
+    var suspension_sport by mutableStateOf(false)
+
+    var mode by mutableStateOf(1)
+    var suspension by mutableStateOf(0)
 
     //using StateFlow to hold UI state
     private val _flowData = MutableStateFlow("")
@@ -63,6 +75,20 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
         bluetoothManager = application.getSystemService(BluetoothManager::class.java)
         bluetoothAdapter = bluetoothManager?.adapter
         bluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
+    }
+
+    fun changeModeTo(m : Int) {
+        mode_wet = if (m == 0) true else false
+        mode_normal = if (m == 1) true else false
+        mode_sport = if (m == 2) true else false
+        mode_sport_plus = if (m == 3) true else false
+        mode = m;
+    }
+
+    fun changeSuspension(s : Int) {
+        suspension_normal = if (s == 0) true else false
+        suspension_sport = if (s == 1) true else false
+        suspension = s;
     }
 
     @Throws(SecurityException::class)

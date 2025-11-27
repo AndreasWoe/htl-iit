@@ -38,7 +38,7 @@ import androidx.navigation.compose.rememberNavController
     heightDp = 800   // height in dp
 )
 @Composable
-fun ScreenScan(viewModel: BleViewModel = BleViewModel(Application())) {
+fun ScreenScanPreview(viewModel: BleViewModel = BleViewModel(Application())) {
     val navController = rememberNavController()
     ScreenScan(viewModel, navController)
 }
@@ -52,9 +52,9 @@ fun ScreenScan(viewModel: BleViewModel = viewModel(), navController: NavHostCont
             contentDescription = null,
             contentScale = ContentScale.Fit // Adjusts how the image fits
         )
-        Column() {
+        Column {
             Row(Modifier.weight(0.1f, fill = true)) {}
-            Row(Modifier.weight(weight = 0.2f, fill = true)) {
+            Row(Modifier.weight(weight = 0.8f, fill = true)) {
                 Column(Modifier.weight(weight = 0.2f, fill = true).padding(5.0.dp))
                 {
                     Text(
@@ -67,24 +67,20 @@ fun ScreenScan(viewModel: BleViewModel = viewModel(), navController: NavHostCont
                         text = "Start Scan",
                         enabled = false,
                         onClick = { viewModel.scanLeDevice() })
-
                     PCMButton(
                         text = "Back to Home",
                         enabled = true,
                         onClick = { navController.navigate(ScreenHome) })
                 }
-                Column(Modifier.weight(weight = 0.6f, fill = true)) { }
-                Column(Modifier.weight(weight = 0.2f, fill = true).padding(5.0.dp)) {}
-            }
-            Row(Modifier.weight(weight = 0.7f, fill = true)) {
                 val scrollState = rememberScrollState()
-
+                Column(Modifier.weight(weight = 0.6f, fill = true).fillMaxHeight()) {EntryList(viewModel.devices, viewModel = viewModel)}
+                Column(Modifier.weight(weight = 0.2f, fill = true).fillMaxHeight().verticalScroll(scrollState)) {Text(text = viewModel.flowData.collectAsState().value, color = Color.White)}
+            }
+            Row(Modifier.weight(weight = 0.1f, fill = true)) {
                 Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }
                 Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }
-                Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) {EntryList(viewModel.devices, viewModel = viewModel)}
-                Column(Modifier.weight(0.25f, fill = true).fillMaxHeight().verticalScroll(scrollState)) {
-                    Text(text = viewModel.flowData.collectAsState().value, color = Color.White)
-                }
+                Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }
+                Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }
             }
         }
     }
