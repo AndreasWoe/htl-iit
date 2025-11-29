@@ -65,11 +65,11 @@ fun ScreenScan(viewModel: BleViewModel = viewModel(), navController: NavHostCont
                     )
                     PCMButton(
                         text = "Start Scan",
-                        enabled = false,
+                        0,1,
                         onClick = { viewModel.scanLeDevice() })
                     PCMButton(
                         text = "Back to Home",
-                        enabled = true,
+                        0,0,
                         onClick = { navController.navigate(ScreenHome) })
                 }
                 val scrollState = rememberScrollState()

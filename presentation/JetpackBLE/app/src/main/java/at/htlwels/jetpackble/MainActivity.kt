@@ -1,7 +1,6 @@
 package at.htlwels.jetpackble
 
 import android.app.Application
-import android.bluetooth.BluetoothDevice
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,23 +13,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -47,10 +34,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 class MainActivity : ComponentActivity() {
-
-    private val viewModel: BleViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,37 +49,36 @@ class MainActivity : ComponentActivity() {
         controller.systemBarsBehavior =
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-        viewModel.initBLE()
         setContent {
-            MainScreen(viewModel)
+            MainScreen()
         }
     }
 }
 
 @Composable
-fun MainScreen(viewModel: BleViewModel) {
+fun MainScreen(viewModel: BleViewModel = viewModel()) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
         startDestination = ScreenHome,
     ) {
         composable<ScreenHome> {
-            HomeScreen(viewModel, navController)
+            HomeScreen(viewModel.nav, navController, viewModel.mode, viewModel.suspension, changeMode = {m -> viewModel.changeMode(m)}, changeSuspension = {s -> viewModel.changeSuspension(s)})
         }
         composable<ScreenP0> {
-            Parking(viewModel, navController, R.drawable.pcm_0)
+            Parking(viewModel.nav, navController, R.drawable.pcm_0)
         }
         composable<ScreenP1> {
-            Parking(viewModel, navController, R.drawable.pcm_1)
+            Parking(viewModel.nav, navController, R.drawable.pcm_1)
         }
         composable<ScreenP2> {
-            Parking(viewModel, navController, R.drawable.pcm_2)
+            Parking(viewModel.nav, navController, R.drawable.pcm_2)
         }
         composable<ScreenP3> {
-            Parking(viewModel, navController, R.drawable.pcm_3)
+            Parking(viewModel.nav, navController, R.drawable.pcm_3)
         }
         composable<ScreenP4> {
-            Parking(viewModel, navController, R.drawable.pcm_4)
+            Parking(viewModel.nav, navController, R.drawable.pcm_4)
         }
         composable<ScreenScan> {
             ScreenScan(viewModel, navController)
@@ -101,9 +87,9 @@ fun MainScreen(viewModel: BleViewModel) {
 }
 
 @Composable
-fun Parking(viewModel: BleViewModel = viewModel(), navController: NavHostController, res: Int) {
+fun Parking(nav: SharedFlow<String> = MutableSharedFlow(), navController: NavHostController, res: Int) {
     LaunchedEffect(Unit) {
-        viewModel.nav.collect { event -> navigateTo(navController, event) }
+        nav.collect { event -> navigateTo(navController, event) }
     }
 
     Box(modifier = Modifier
@@ -125,9 +111,9 @@ fun Parking(viewModel: BleViewModel = viewModel(), navController: NavHostControl
     heightDp = 800   // height in dp
 )
 @Composable
-fun HomeScreenPreview(viewModel: BleViewModel = BleViewModel(Application())) {
+fun HomeScreenPreview() {
     val navController = rememberNavController()
-    HomeScreen(viewModel, navController)
+    HomeScreen(navController = navController)
 }
 
 private fun navigateTo(navController: NavHostController, destination: String) {
@@ -142,12 +128,10 @@ private fun navigateTo(navController: NavHostController, destination: String) {
 }
 
 @Composable
-fun HomeScreen(viewModel: BleViewModel = viewModel(), navController: NavHostController) {
+fun HomeScreen(nav: SharedFlow<String> = MutableSharedFlow(), navController: NavHostController, mode: Int = 0, suspension: Int = 0, changeMode: (Int) -> Unit = {}, changeSuspension: (Int) -> Unit = {}) {
     LaunchedEffect(Unit) {
-        viewModel.nav.collect { event -> navigateTo(navController, event) }
+        nav.collect { event -> navigateTo(navController, event) }
     }
-
-    val suspension = remember { mutableStateListOf(true, false) }
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -171,10 +155,10 @@ fun HomeScreen(viewModel: BleViewModel = viewModel(), navController: NavHostCont
                         fontSize = 25.sp,
                         fontFamily = FontFamily.SansSerif // closest to Arial by default
                     )
-                    PCMButton("WET", enabled = viewModel.mode_wet, onClick = {viewModel.changeModeTo(0)})
-                    PCMButton("NORMAL", enabled = viewModel.mode_normal, onClick = {viewModel.changeModeTo(1)})
-                    PCMButton("SPORT", enabled = viewModel.mode_sport, onClick = {viewModel.changeModeTo(2)})
-                    PCMButton("SPORT PLUS", enabled = viewModel.mode_sport_plus, onClick = {viewModel.changeModeTo(3)})
+                    PCMButton("WET", 0, mode, onClick = {changeMode(0)})
+                    PCMButton("NORMAL",  1, mode, onClick = {changeMode(1)})
+                    PCMButton("SPORT",  2, mode, onClick = {changeMode(2)})
+                    PCMButton("SPORT PLUS",  3, mode, onClick = {changeMode(3)})
                 }
                 Column(Modifier.weight(weight = 0.6f, fill = true)) { }
                 Column(Modifier
@@ -187,10 +171,10 @@ fun HomeScreen(viewModel: BleViewModel = viewModel(), navController: NavHostCont
                         fontFamily = FontFamily.SansSerif // closest to Arial by default
                     )
 
-                    PCMButton("NORMAL", enabled = viewModel.suspension_normal, onClick = {viewModel.changeSuspension(0)})
-                    PCMButton("SPORT", enabled = viewModel.suspension_sport, onClick = {viewModel.changeSuspension(1)})
+                    PCMButton("NORMAL",  0, suspension, onClick = {changeSuspension(0)})
+                    PCMButton("SPORT",  1, suspension, onClick = {changeSuspension(1)})
                     Spacer(Modifier.height(25.dp))
-                    var hideSystem = true;
+                    var hideSystem = false;
                     if(!hideSystem) {
                         Text(
                             text = "System",
@@ -200,7 +184,8 @@ fun HomeScreen(viewModel: BleViewModel = viewModel(), navController: NavHostCont
                         )
                         PCMButton(
                             text = "Scan",
-                            enabled = false,
+                            0,
+                            1,
                             onClick = { navController.navigate(ScreenScan) })
                     }
                 }
@@ -222,7 +207,7 @@ fun HomeScreen(viewModel: BleViewModel = viewModel(), navController: NavHostCont
                         fontFamily = FontFamily.SansSerif // closest to Arial by default
                     )
                     Text(
-                        text = viewModel.mode.toString(),
+                        text = mode.toString(),
                         color = Color.Red,
                         fontSize = 25.sp,
                         fontFamily = FontFamily.SansSerif // closest to Arial by default
@@ -238,7 +223,7 @@ fun HomeScreen(viewModel: BleViewModel = viewModel(), navController: NavHostCont
                         fontFamily = FontFamily.SansSerif // closest to Arial by default
                     )
                     Text(
-                        text = viewModel.suspension.toString(),
+                        text = suspension.toString(),
                         color = Color.Red,
                         fontSize = 25.sp,
                         fontFamily = FontFamily.SansSerif // closest to Arial by default

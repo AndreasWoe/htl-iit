@@ -19,11 +19,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PCMButton(text: String, enabled: Boolean = false, onClick: () -> Unit = {}) {
+fun PCMButton(text: String, id: Int, value: Int, onClick: () -> Unit = {}) {
     var c: Color
     var lc: Color = Color.Transparent
 
-    if(enabled) {
+    if(id == value) {
         c = Color(0xFF989A9B)
         lc = Color.Red
     } else {
