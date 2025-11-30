@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -36,6 +37,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 class MainActivity : ComponentActivity() {
 
@@ -63,7 +65,7 @@ fun MainScreen(viewModel: BleViewModel = viewModel()) {
         startDestination = ScreenHome,
     ) {
         composable<ScreenHome> {
-            HomeScreen(viewModel.nav, navController, viewModel.mode, viewModel.suspension, changeMode = {m -> viewModel.changeMode(m)}, changeSuspension = {s -> viewModel.changeSuspension(s)})
+            HomeScreen(viewModel.nav, navController, viewModel.mode, viewModel.suspension, changeMode = {viewModel.changeMode(it)}, changeSuspension = {viewModel.changeSuspension(it)})
         }
         composable<ScreenP0> {
             Parking(viewModel.nav, navController, R.drawable.pcm_0)
@@ -81,7 +83,7 @@ fun MainScreen(viewModel: BleViewModel = viewModel()) {
             Parking(viewModel.nav, navController, R.drawable.pcm_4)
         }
         composable<ScreenScan> {
-            ScreenScan(viewModel, navController)
+            ScreenScan(navController, console = viewModel.flowData.collectAsState().value, data = viewModel.devices, scan = {viewModel.scanLeDevice()},  connect = {viewModel.connect(it) })
         }
     }
 }
@@ -89,7 +91,7 @@ fun MainScreen(viewModel: BleViewModel = viewModel()) {
 @Composable
 fun Parking(nav: SharedFlow<String> = MutableSharedFlow(), navController: NavHostController, res: Int) {
     LaunchedEffect(Unit) {
-        nav.collect { event -> navigateTo(navController, event) }
+        nav.collect {  navigateTo(navController, it) }
     }
 
     Box(modifier = Modifier
@@ -130,7 +132,7 @@ private fun navigateTo(navController: NavHostController, destination: String) {
 @Composable
 fun HomeScreen(nav: SharedFlow<String> = MutableSharedFlow(), navController: NavHostController, mode: Int = 0, suspension: Int = 0, changeMode: (Int) -> Unit = {}, changeSuspension: (Int) -> Unit = {}) {
     LaunchedEffect(Unit) {
-        nav.collect { event -> navigateTo(navController, event) }
+        nav.collect { navigateTo(navController, it) }
     }
 
     Box(modifier = Modifier

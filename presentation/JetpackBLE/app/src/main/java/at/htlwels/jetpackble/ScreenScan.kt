@@ -1,6 +1,5 @@
 package at.htlwels.jetpackble
 
-import android.app.Application
 import android.bluetooth.BluetoothDevice
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,7 +17,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -27,7 +25,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -38,13 +35,13 @@ import androidx.navigation.compose.rememberNavController
     heightDp = 800   // height in dp
 )
 @Composable
-fun ScreenScanPreview(viewModel: BleViewModel = BleViewModel(Application())) {
+fun ScreenScanPreview() {
     val navController = rememberNavController()
-    ScreenScan(viewModel, navController)
+    ScreenScan(navController)
 }
 
 @Composable
-fun ScreenScan(viewModel: BleViewModel = viewModel(), navController: NavHostController) {
+fun ScreenScan(navController: NavHostController, console: String = "", data: List<BluetoothDevice> = emptyList(), scan: () -> Unit = {}, connect: (BluetoothDevice) -> Unit = {}) {
     Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
         Image(
             modifier = Modifier.fillMaxSize(),
@@ -66,15 +63,15 @@ fun ScreenScan(viewModel: BleViewModel = viewModel(), navController: NavHostCont
                     PCMButton(
                         text = "Start Scan",
                         0,1,
-                        onClick = { viewModel.scanLeDevice() })
+                        onClick = scan )
                     PCMButton(
                         text = "Back to Home",
                         0,0,
                         onClick = { navController.navigate(ScreenHome) })
                 }
                 val scrollState = rememberScrollState()
-                Column(Modifier.weight(weight = 0.6f, fill = true).fillMaxHeight()) {EntryList(viewModel.devices, viewModel = viewModel)}
-                Column(Modifier.weight(weight = 0.2f, fill = true).fillMaxHeight().verticalScroll(scrollState)) {Text(text = viewModel.flowData.collectAsState().value, color = Color.White)}
+                Column(Modifier.weight(weight = 0.6f, fill = true).fillMaxHeight()) {EntryList(Modifier, data, connect)}
+                Column(Modifier.weight(weight = 0.2f, fill = true).fillMaxHeight().verticalScroll(scrollState)) {Text(text = console, color = Color.White)}
             }
             Row(Modifier.weight(weight = 0.1f, fill = true)) {
                 Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }
@@ -87,21 +84,21 @@ fun ScreenScan(viewModel: BleViewModel = viewModel(), navController: NavHostCont
 }
 
 @Composable
-fun EntryList(data: List<BluetoothDevice>, modifier : Modifier = Modifier, viewModel: BleViewModel) {
+fun EntryList(modifier : Modifier = Modifier, data: List<BluetoothDevice>, connect: (BluetoothDevice) -> Unit) {
     LazyColumn (modifier = modifier) {
         items(data) { e ->
-            EntryItem(e, viewModel)
+            EntryItem(e, connect)
         }
     }
 }
 
 @Composable
-fun EntryItem(bd: BluetoothDevice, viewModel: BleViewModel) {
+fun EntryItem(bd: BluetoothDevice, connect: (BluetoothDevice) -> Unit) {
     Column(modifier = Modifier
         .fillMaxWidth()
         .padding(8.dp)) {
         Text(text = bd.name ?: "Unknown Device")
-        Button(onClick = { viewModel.connect(bd) }) {
+        Button(onClick = { connect(bd) }) {
             Text("Connect")
         }
     }
