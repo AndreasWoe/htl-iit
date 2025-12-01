@@ -65,7 +65,7 @@ fun ScreenScan(navController: NavHostController, console: String = "", data: Lis
                         0,1,
                         onClick = scan )
                     PCMButton(
-                        text = "Back to Home",
+                        text = "Home",
                         0,0,
                         onClick = { navController.navigate(ScreenHome) })
                 }
@@ -97,7 +97,7 @@ fun EntryItem(bd: BluetoothDevice, connect: (BluetoothDevice) -> Unit) {
     Column(modifier = Modifier
         .fillMaxWidth()
         .padding(8.dp)) {
-        Text(text = bd.name ?: "Unknown Device")
+        Text(modifier = Modifier, color = Color.White, text = bd.name ?: "Unknown Device")
         Button(onClick = { connect(bd) }) {
             Text("Connect")
         }

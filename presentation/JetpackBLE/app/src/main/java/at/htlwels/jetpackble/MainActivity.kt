@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -83,9 +84,21 @@ fun MainScreen(viewModel: BleViewModel = viewModel()) {
             Parking(viewModel.nav, navController, R.drawable.pcm_4)
         }
         composable<ScreenScan> {
-            ScreenScan(navController, console = viewModel.flowData.collectAsState().value, data = viewModel.devices, scan = {viewModel.scanLeDevice()},  connect = {viewModel.connect(it) })
+            ScreenScan(navController, console = viewModel.data, data = viewModel.devices, scan = {viewModel.scanLeDevice()},  connect = {viewModel.connect(it) })
         }
     }
+}
+
+@Preview(
+    name = "Parking Preview",
+    showBackground = true,
+    widthDp = 1280,  // width in dp
+    heightDp = 800   // height in dp
+)
+@Composable
+fun ParkingPreview() {
+    val navController = rememberNavController()
+    Parking(navController = navController, res = R.drawable.pcm_0)
 }
 
 @Composable
@@ -103,11 +116,14 @@ fun Parking(nav: SharedFlow<String> = MutableSharedFlow(), navController: NavHos
             contentDescription = null,
             contentScale = ContentScale.Fit // Adjusts how the image fits
         )
+        Column(Modifier.width(150.dp).padding(5.dp)) {
+            PCMButton("Home", 0, 0, onClick = {navController.navigate(ScreenHome)})
+        }
     }
 }
 
 @Preview(
-    name = "Landscape Preview",
+    name = "Home Preview",
     showBackground = true,
     widthDp = 1280,  // width in dp
     heightDp = 800   // height in dp
@@ -202,7 +218,7 @@ fun HomeScreen(nav: SharedFlow<String> = MutableSharedFlow(), navController: Nav
                 Column(Modifier
                     .weight(0.25f, fill = true)
                     .fillMaxHeight()) {
-                    Text(
+                   /* Text(
                         text = "Modus",
                         color = Color.White,
                         fontSize = 25.sp,
@@ -213,12 +229,12 @@ fun HomeScreen(nav: SharedFlow<String> = MutableSharedFlow(), navController: Nav
                         color = Color.Red,
                         fontSize = 25.sp,
                         fontFamily = FontFamily.SansSerif // closest to Arial by default
-                    )
+                    )*/
                 }
                 Column(Modifier
                     .weight(0.25f, fill = true)
                     .fillMaxHeight()) {
-                    Text(
+                    /*Text(
                         text = "Fahrwerk",
                         color = Color.White,
                         fontSize = 25.sp,
@@ -229,7 +245,7 @@ fun HomeScreen(nav: SharedFlow<String> = MutableSharedFlow(), navController: Nav
                         color = Color.Red,
                         fontSize = 25.sp,
                         fontFamily = FontFamily.SansSerif // closest to Arial by default
-                    )
+                    )*/
                 }
             }
         }

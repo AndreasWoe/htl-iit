@@ -32,6 +32,8 @@ import java.util.UUID
 
 class BleViewModel(application: Application) : AndroidViewModel(application) {
 
+    var currentScreen = 0
+
     val names = mutableStateListOf<String>()
     val devices = mutableStateListOf<BluetoothDevice>()
     var data: String by mutableStateOf("")
@@ -226,18 +228,30 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
                 _flowData.value += data
 
                 //navigation test
-                if(receivedData.contains("0"))
+                if(receivedData.contains("0") && currentScreen != 0) {
+                    currentScreen = 0
                     _nav.tryEmit("home")
-                else if(receivedData.contains("1"))
+                }
+                else if(receivedData.contains("1") && currentScreen != 1) {
+                    currentScreen = 1
                     _nav.tryEmit("p_0")
-                else if(receivedData.contains("2"))
+                }
+                else if(receivedData.contains("2") && currentScreen != 2) {
+                    currentScreen = 2
                     _nav.tryEmit("p_1")
-                else if(receivedData.contains("3"))
+                }
+                else if(receivedData.contains("3") && currentScreen != 3) {
+                    currentScreen = 3
                     _nav.tryEmit("p_2")
-                else if(receivedData.contains("4"))
+                }
+                else if(receivedData.contains("4") && currentScreen != 4) {
+                    currentScreen = 4
                     _nav.tryEmit("p_3")
-                else if(receivedData.contains("5"))
+                }
+                else if(receivedData.contains("5") && currentScreen != 5) {
+                    currentScreen = 5
                     _nav.tryEmit("p_4")
+                }
             }
         }
     }
