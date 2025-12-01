@@ -225,7 +225,12 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
                 val d = characteristic.getValue()
                 val receivedData = String(d)
                 data += receivedData
-                _flowData.value += data
+
+                if(data.length > 1000) {
+                    data = ""
+                }
+                
+                //_flowData.value += data
 
                 //navigation test
                 if(receivedData.contains("0") && currentScreen != 0) {
