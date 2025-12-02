@@ -34,7 +34,7 @@ fun PCMButton(text: String, id: Int, value: Int, onClick: () -> Unit = {}) {
     Column(Modifier.padding(0.dp),
         verticalArrangement = Arrangement.spacedBy(0.dp)) {
         Button(
-            onClick = { onClick() },
+            onClick = onClick,
             modifier = Modifier.fillMaxWidth(1.0f).defaultMinSize(minHeight = 50.dp),
             shape = RectangleShape, // makes it rectangular
             colors = ButtonDefaults.buttonColors(containerColor = c)

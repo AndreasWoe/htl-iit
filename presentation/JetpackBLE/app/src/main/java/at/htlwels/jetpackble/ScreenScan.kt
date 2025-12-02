@@ -71,7 +71,7 @@ fun ScreenScan(navController: NavHostController, console: String = "", data: Lis
                 }
                 val scrollState = rememberScrollState()
                 Column(Modifier.weight(weight = 0.6f, fill = true).fillMaxHeight()) {EntryList(Modifier, data, connect)}
-                Column(Modifier.weight(weight = 0.2f, fill = true).fillMaxHeight().verticalScroll(scrollState)) {Text(text = console, color = Color.White)}
+                Column(Modifier.weight(weight = 0.2f, fill = true).fillMaxHeight().verticalScroll(scrollState).padding(5.0.dp)) {Text(text = console, color = Color.White)}
             }
             Row(Modifier.weight(weight = 0.1f, fill = true)) {
                 Column(Modifier.weight(0.25f, fill = true).fillMaxHeight()) { }

@@ -84,7 +84,7 @@ fun MainScreen(viewModel: BleViewModel = viewModel()) {
             Parking(viewModel.nav, navController, R.drawable.pcm_4)
         }
         composable<ScreenScan> {
-            ScreenScan(navController, console = viewModel.data, data = viewModel.devices, scan = {viewModel.scanLeDevice()},  connect = {viewModel.connect(it) })
+            ScreenScan(navController, console = viewModel.flowData.collectAsState("").value, data = viewModel.devices, scan = {viewModel.scanLeDevice()},  connect = {viewModel.connect(it) })
         }
     }
 }

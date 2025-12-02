@@ -97,7 +97,7 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
             bluetoothGatt!!.disconnect()
             bluetoothGatt!!.close()
             bluetoothGatt = null
-            //Snackbar.make(findViewById(R.id.loMain), "Disconnected!", Snackbar.LENGTH_LONG).show()
+            _flowData.value += "\nDisconnected from device!\n"
         }
     }
 
@@ -108,7 +108,7 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
             } else {
                 //connect profil
                 bluetoothGatt = bd.connectGatt(application.applicationContext, false, gattCallback);
-                //Snackbar.make(findViewById(R.id.loMain), "Trying to connect ...", Snackbar.LENGTH_LONG).show();
+                _flowData.value += "\nTrying to connect ...\n"
             }
             //bluetoothLeScanner.stopScan(leScanCallback);
         } catch (e: SecurityException) {
@@ -123,6 +123,8 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
         }
         else {
             if (!scanning) { // Stops scanning after a pre-defined scan period.
+                names.clear()
+                devices.clear()
                 handler.postDelayed({
                     scanning = false
                     //safe call - call methode only if object != null
@@ -182,7 +184,7 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
     private val gattCallback: BluetoothGattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-                //Snackbar.make(findViewById(R.id.loMain), "Connected!", Snackbar.LENGTH_LONG).show()
+                _flowData.value += "\nConnected to device!\n"
                 try {
                     gatt.discoverServices()
                 } catch (e: SecurityException) {
@@ -190,6 +192,7 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
                 }
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 //disconnected
+                _flowData.value += "\nDisconnected from device!\n"
             }
         }
 
@@ -224,13 +227,16 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
             if (YOUR_CHARACTERISTIC_UUID == characteristic.getUuid()) {
                 val d = characteristic.getValue()
                 val receivedData = String(d)
-                data += receivedData
 
+                data += receivedData
                 if(data.length > 1000) {
                     data = ""
                 }
 
-                //_flowData.value += data
+                _flowData.value += receivedData
+                if(_flowData.value.length > 1000) {
+                    _flowData.value = ""
+                }
 
                 //navigation test
                 if(receivedData.contains("0") && currentScreen != 0) {
