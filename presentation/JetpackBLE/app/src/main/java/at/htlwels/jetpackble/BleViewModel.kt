@@ -229,7 +229,7 @@ class BleViewModel(application: Application) : AndroidViewModel(application) {
                 if(data.length > 1000) {
                     data = ""
                 }
-                
+
                 //_flowData.value += data
 
                 //navigation test
