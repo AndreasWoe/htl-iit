@@ -1,1 +1,7 @@
+https://www.embedded-software-engineering.de/was-ist-ein-embedded-system-a-2f4dea790a099303848bbd05eb4359a3/?p=1
+
 https://www.imt.ch/de/expert-blog-detail/grundlagen-der-entwicklung-von-embedded-systemen
+
+https://de.digi.com/blog/post/examples-of-embedded-systems
+
+https://embeddedhash.in/embedded-systems-and-robotics/
